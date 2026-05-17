@@ -1,0 +1,157 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <title>AI Quant Agent README</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --ink: #111827;
+      --muted: #5b6472;
+      --line: #d7dde6;
+      --accent: #0f766e;
+      --paper: #ffffff;
+      --bg: #f3f6f8;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--ink);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", sans-serif;
+      line-height: 1.65;
+      padding: 36px;
+    }
+    main {
+      width: 980px;
+      margin: 0 auto;
+      background: var(--paper);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 42px 52px;
+      box-shadow: 0 18px 48px rgba(17, 24, 39, 0.08);
+    }
+    h1 {
+      font-size: 34px;
+      line-height: 1.18;
+      margin: 0 0 22px;
+      letter-spacing: 0;
+    }
+    h2 {
+      font-size: 22px;
+      margin: 30px 0 12px;
+      padding-top: 18px;
+      border-top: 1px solid var(--line);
+      letter-spacing: 0;
+    }
+    p, li {
+      font-size: 17px;
+      margin: 8px 0;
+    }
+    ul {
+      padding-left: 24px;
+      margin: 8px 0 12px;
+    }
+    pre {
+      background: #0b1220;
+      color: #dbeafe;
+      border-radius: 8px;
+      padding: 16px 18px;
+      overflow: hidden;
+      font-size: 15px;
+      line-height: 1.55;
+    }
+    a {
+      color: #0f766e;
+      text-decoration: none;
+      font-weight: 650;
+    }
+    code {
+      font-family: "SFMono-Regular", Consolas, monospace;
+    }
+    p:first-of-type {
+      color: var(--muted);
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <h1>AI Quant Agent</h1><p>AI Quant Agent is a local research prototype that connects two open-source projects:</p><ul><li><a href="https://github.com/TauricResearch/TradingAgents">TauricResearch/TradingAgents</a>: multi-agent market analysis</li><li><a href="https://github.com/brokermr810/QuantDinger">brokermr810/QuantDinger</a>: strategy development, backtesting, and simulated execution</li></ul><p>The goal is to build a bridge between agent-based market reasoning and a quantitative backtesting workflow. TradingAgents is used as the analysis layer, QuantDinger is used as the backtesting and execution research layer, and this repository provides the middle layer that turns analysis output into strategy templates, backtest requests, and review reports.</p><p>This project is for research, backtesting, and paper-only experimentation. It is not investment advice and does not connect to real capital accounts.</p><h2>What This Repository Does</h2><p>The current MVP focuses on a complete local workflow that can run without external services:</p><p>1. Accept a stock symbol such as `AAPL`.</p><p>2. Generate a baseline MA10 / MA30 moving-average crossover strategy.</p><p>3. Run a deterministic offline mock backtest.</p><p>4. Produce metrics such as total return, max drawdown, win rate, trade count, and stop-loss count.</p><p>5. Generate a Chinese Markdown review report.</p><p>6. Keep extension points ready for TradingAgents and QuantDinger integration.</p><p>The mock backtest is intentionally simple. Its purpose is to make the bridge workflow runnable before connecting external systems.</p><h2>Architecture</h2><pre><code>TradingAgents analysis layer
+technical agent / sentiment agent / fundamentals agent / risk agent
+        |
+        v
+AI Quant Agent bridge layer
+analysis normalization / strategy template generation / backtest request / report generation
+        |
+        v
+QuantDinger research layer
+Python strategy / backtest metrics / simulated execution result</code></pre><h2>Intended Data Flow</h2><pre><code>Input symbol
+    |
+    v
+TradingAgents multi-agent analysis
+    |
+    v
+Structured market view
+    |
+    v
+Strategy template selection
+    |
+    v
+QuantDinger backtest request
+    |
+    v
+Backtest metrics
+    |
+    v
+AI-generated review report</code></pre><p>Example future TradingAgents output:</p><pre><code>{
+  &quot;symbol&quot;: &quot;AAPL&quot;,
+  &quot;market_view&quot;: &quot;bullish&quot;,
+  &quot;technical_signal&quot;: &quot;MA10 above MA30, RSI neutral&quot;,
+  &quot;risk_level&quot;: &quot;medium&quot;,
+  &quot;suggested_strategy&quot;: &quot;trend_following&quot;,
+  &quot;stop_loss&quot;: 0.03,
+  &quot;take_profit&quot;: 0.06
+}</code></pre><p>The bridge layer can convert that structured output into a QuantDinger-compatible strategy and submit it to the backtest interface.</p><h2>Current MVP</h2><p>The MVP currently includes:</p><ul><li>A baseline MA10 / MA30 crossover strategy generator</li><li>A deterministic mock backtest client</li><li>A placeholder QuantDinger Agent API client</li><li>A Markdown report generator</li><li>Unit tests for the end-to-end MVP flow</li><li>Rendered screenshots for README and sample report previews</li></ul><h2>Repository Structure</h2><pre><code>ai_quant_agent/
+  strategies.py      Strategy dataclass and MA crossover strategy generator
+  backtests.py       Mock backtest client and QuantDinger client scaffold
+  reports.py         Markdown report builder
+
+agents/
+  README.md          Planned TradingAgents adapter location
+
+backtests/
+  README.md          Planned QuantDinger backtest scripts
+
+strategies/
+  README.md          Planned strategy template files
+
+reports/
+  AAPL_report.md     Generated sample research report
+
+screenshots/
+  readme.png         Rendered README preview
+  aapl-report.png    Rendered report preview
+
+scripts/
+  render_materials.py  Local renderer for Markdown preview screenshots
+
+tests/
+  test_mvp_flow.py   Unit tests for the MVP workflow</code></pre><h2>Quick Start</h2><pre><code>git clone https://github.com/mcchipp/ai-quant-agent.git
+cd ai-quant-agent
+python3 main.py AAPL</code></pre><p>The command writes:</p><pre><code>reports/AAPL_report.md</code></pre><p>Run the same workflow with another symbol:</p><pre><code>python3 main.py TSLA</code></pre><h2>Testing</h2><pre><code>python3 -m unittest discover -s tests -v</code></pre><p>Expected result:</p><pre><code>Ran 2 tests ... OK</code></pre><h2>QuantDinger Integration Plan</h2><p>The current `MockBacktestClient` validates the bridge flow without external dependencies. The planned QuantDinger mode uses the configuration in `.env.example`:</p><pre><code>BACKTEST_MODE=quantdinger
+QUANTDINGER_BASE_URL=http://localhost:8888
+QUANTDINGER_AGENT_TOKEN=your_agent_token_here</code></pre><p>Recommended early-stage permissions:</p><pre><code>R = read market data
+B = backtest / simulation</code></pre><p>Avoid enabling real trading permissions during MVP research:</p><pre><code>T = live trading / real capital</code></pre><h2>TradingAgents Integration Plan</h2><p>The planned TradingAgents adapter will normalize multi-agent analysis into a stable bridge format:</p><pre><code>{
+    &quot;symbol&quot;: &quot;AAPL&quot;,
+    &quot;market_view&quot;: &quot;bullish&quot;,
+    &quot;technical_signal&quot;: &quot;MA10 above MA30&quot;,
+    &quot;risk_level&quot;: &quot;medium&quot;,
+    &quot;suggested_strategy&quot;: &quot;trend_following&quot;,
+    &quot;risk_controls&quot;: {
+        &quot;stop_loss&quot;: 0.03,
+        &quot;take_profit&quot;: 0.06
+    }
+}</code></pre><p>That payload can then be mapped to one of several strategy templates:</p><ul><li>moving-average crossover</li><li>RSI-filtered trend following</li><li>breakout strategy</li><li>pullback strategy</li><li>volatility-filtered strategy</li></ul><h2>Roadmap</h2><ul><li>Add a TradingAgents adapter that reads structured multi-agent analysis output.</li><li>Add strategy templates beyond MA crossover.</li><li>Add a QuantDinger backtest submission and polling client.</li><li>Store backtest results as JSON artifacts.</li><li>Generate comparative reports across multiple symbols and strategies.</li><li>Keep the project in backtest-only and paper-only mode until the risk model is mature.</li></ul><h2>Safety Boundary</h2><p>This repository is designed for research workflows only:</p><ul><li>No financial advice</li><li>No live trading by default</li><li>No real capital connection</li><li>No guarantee of future performance</li><li>Backtest and mock results are for workflow validation only</li></ul>
+  </main>
+</body>
+</html>
